@@ -1,4 +1,6 @@
-﻿using K205Agency.Models;
+﻿using K205Agency.Data;
+using K205Agency.Models;
+using K205Agency.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,14 +10,26 @@ namespace K205Agency.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly AgencyDbContext _context;
+
+        public HomeController(ILogger<HomeController> logger, AgencyDbContext context)
         {
+
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            HomeVM homeVM = new()
+            {
+                Masthead = _context.Mastheads.FirstOrDefault(),
+                Services = _context.Services.ToList(),
+                Teams = _context.Teams.ToList(),
+                Photos = _context.Photos.ToList()
+        };
+            
+            return View(homeVM);
         }
 
         public IActionResult Privacy()
